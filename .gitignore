@@ -1,0 +1,5 @@
+/Test
+/Dist
+/Production
+
+*.code-workspace

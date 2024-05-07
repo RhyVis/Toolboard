@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts
+      - uses: actions/checkout@v4
+
+      - name: Build Frontend
+        run: |
+          cd Frontend
+          npm install --no-audit --loglevel=error
+          npm run build
+          cd ..
+
+      - name: Build Backend
+        run: |
+          cd Backend
+          npm install --no-audit --loglevel=error
+          npm run build
+          cd ..
+
+      - name: Assemble Up
+        run: |
+          mkdir -p production
+          cp -r Backend/dist production/
+          cp Backend/package.json production/
+          cp Backend/package-lock.json production/
+
+          mkdir -p production/dist/public
+          cp -r Frontend/dist/* production/dist/public/
+
+          zip -r -q production_min.zip production
+
+          cp -r Backend/node_modules production/
+          zip -r -q production.zip production
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: Production Release
+          artifacts: "production_min.zip,production.zip"
+          tag: 'prebuild'
+          allowUpdates: true
+          prerelease: true
+          body: "Pre-release build for dev"
+      
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          registry: ccr.ccs.tencentyun.com
+          username: ${{ secrets.TENCENT_NAME }}
+          password: ${{ secrets.TENCENT_KEY }}
+      
+      - name: Docker Build & Update
+        run: |
+          docker build -f ./Dockerfile -t ccr.ccs.tencentyun.com/rhynia/resolvo:latest ./production
+          docker push ccr.ccs.tencentyun.com/rhynia/resolvo:latest
