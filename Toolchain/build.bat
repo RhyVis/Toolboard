@@ -4,10 +4,10 @@
 
 CD ..
 
-:: Clear Production
+:: Clear Dist
 
-ECHO Clearing Production directory...
-IF EXIST Production RD /s /q Production
+ECHO Clearing Dist directory...
+IF EXIST Dist RD /s /q Dist
 
 :: Build Frontend
 
@@ -27,22 +27,22 @@ CD ..
 
 :: Assemble Up
 
-ECHO Copying Backend to Production...
-IF NOT EXIST Production MKDIR Production
+ECHO Copying Backend to Dist...
+IF NOT EXIST Dist MKDIR Dist
 
-MKDIR Production\dist
-XCOPY /E /Y /Q Backend\dist\*.* Production\dist\ 1>nul
+MKDIR Dist\dist
+XCOPY /E /Y /Q Backend\dist\*.* Dist\dist\ 1>nul
 
-MKDIR Production\node_modules
-XCOPY /E /Y /Q Backend\node_modules\*.* Production\node_modules\ 1>nul
+MKDIR Dist\node_modules
+XCOPY /E /Y /Q Backend\node_modules\*.* Dist\node_modules\ 1>nul
 
-COPY /Y Backend\package.json Production\ 1>nul
-COPY /Y Backend\package-lock.json Production\ 1>nul
+COPY /Y Backend\package.json Dist\ 1>nul
+COPY /Y Backend\package-lock.json Dist\ 1>nul
 
-ECHO Copying Frontend dist to Production...
-XCOPY /E /Y /Q Frontend\dist\*.* Production\dist\public\ 1>nul
+ECHO Copying Frontend dist to Dist...
+XCOPY /E /Y /Q Frontend\dist\*.* Dist\dist\public\ 1>nul
 
-ECHO Copying env to Production...
-COPY /Y Test\.env Production\ 1>nul
+ECHO Copying env to Dist...
+COPY /Y Test\.env Dist\ 1>nul
 
 ECHO Build completed.

@@ -12,7 +12,7 @@ const props = defineProps<{
       </template>
       <slot></slot>
       <template #footer>
-        <div class="text-muted">Resolvo</div>
+        <div class="text-muted">Toolboard</div>
       </template>
     </el-card>
   </div>
