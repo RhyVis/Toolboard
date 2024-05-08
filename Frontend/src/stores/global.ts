@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const global = defineStore('global', {
+export const global = defineStore("global", {
   state: () => {
     return {
-      global: 0
-    }
-  }
-})
+      global: 0,
+    };
+  },
+});

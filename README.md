@@ -1,6 +1,6 @@
 # Toolboard
 
-[![Build and Deploy](https://github.com/RhyVis/Resolvo/actions/workflows/build.yml/badge.svg)](https://github.com/RhyVis/Resolvo/actions/workflows/build.yml)
+[![Build](https://github.com/RhyVis/Toolboard/actions/workflows/build.yml/badge.svg)](https://github.com/RhyVis/Toolboard/actions/workflows/build.yml)
 
 给我自己的网页用的沙雕玩具，当做学习Node的原料了，采用Vue3前端+Express后端缝合而成，完全在Node环境下运行。预构建为镜像，方便更新部署。
 

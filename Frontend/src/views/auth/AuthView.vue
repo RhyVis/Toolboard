@@ -1,55 +1,106 @@
 <script lang="ts" setup>
-import axios from 'axios'
-import { reactive, ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { computed, onMounted, reactive, ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
 
-import CardFrame from '@/components/frames/CardFrame.vue'
+import CardFrame from "@/components/frames/CardFrame.vue";
+
+const auth = useAuthStore();
 
 const query = reactive({
-  token: ''
-})
+  token: "",
+});
 
-const auth = useAuthStore()
-
-const verifyButtonType = ref('primary')
-const verifyButtonText = ref('更新')
+const verifyState = ref(0);
+const verifyElement = computed(() => {
+  switch (verifyState.value) {
+    case 0:
+      return {
+        type: "primary",
+        value: "更新",
+      };
+    case 1:
+      return {
+        type: "success",
+        value: "成功",
+      };
+    case 2:
+      return {
+        type: "danger",
+        value: "失败",
+      };
+    default:
+      return {
+        type: "info",
+        value: "未知",
+      };
+  }
+});
 
 const verify = async () => {
-  let { token } = query
-  if (token.length > 0 && token != 'Blank means useless') {
-    auth.updateToken(token)
-    let { res } = (await axios.post('/api/auth', { token: token })).data
-    if (res === true) {
-      verifyButtonType.value = 'success'
-      verifyButtonText.value = '成功'
-      auth.updateValid(true)
-    } else {
-      auth.updateValid(false)
+  const { token } = query;
+  if (token.length > 0 && token != "不要空置") {
+    try {
+      auth.updateToken(token);
+      verifyState.value = await auth.validateToken;
+    } catch (e) {
+      console.error(e);
+      verifyState.value = 2;
     }
   } else {
-    query.token = 'Blank means useless'
+    query.token = "不要空置";
+    verifyState.value = 2;
   }
-}
+};
 
-const clearButtonType = ref('secondary')
-const clearButtonText = ref('移除')
+const clearState = ref(0);
+const clearElement = computed(() => {
+  switch (clearState.value) {
+    case 0:
+      return {
+        type: "warning",
+        value: "移除",
+      };
+    case 1:
+      return {
+        type: "danger",
+        value: "成功",
+      };
+    default:
+      return {
+        type: "info",
+        value: "未知",
+      };
+  }
+});
 
 const clear = () => {
-  auth.$reset()
-  clearButtonType.value = 'danger'
-  clearButtonText.value = '成功'
-}
+  auth.$reset();
+  clearState.value = 1;
+};
+
+onMounted(() => {
+  verifyState.value = 0;
+  clearState.value = 0;
+});
 </script>
 
 <template>
   <CardFrame title="校验">
     <el-form :model="query" label-width="auto">
       <el-form-item label="后端校验码">
-        <el-input v-model="query.token" type="text" placeholder="在这里输入后端设置的Token" />
+        <el-input
+          v-model="query.token"
+          type="text"
+          placeholder="输入后端设置的Token"
+        />
       </el-form-item>
       <el-form-item label="验证">
-        <el-button :type="verifyButtonType" @click="verify">{{ verifyButtonText }}</el-button>
-        <el-button :type="clearButtonType" @click="clear">{{ clearButtonText }}</el-button>
+        <el-button :type="verifyElement.type" @click="verify">
+          {{ verifyElement.value }}
+        </el-button>
+        <el-button :type="clearElement.type" @click="clear">
+          {{ clearElement.value }}
+        </el-button>
       </el-form-item>
     </el-form>
   </CardFrame>

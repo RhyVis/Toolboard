@@ -1,90 +1,94 @@
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue'
-import axios from 'axios'
+import { computed, reactive, ref } from "vue";
+import axios from "axios";
 
-import CardFrame from '@/components/frames/CardFrame.vue'
+import CardFrame from "@/components/frames/CardFrame.vue";
 
 class Card {
-  index!: number
-  name!: string
-  local!: string
+  index!: number;
+  name!: string;
+  local!: string;
   mean!: {
-    upright: string
-    reversed: string
-  }
-  img!: string
-  desc!: string[]
+    upright: string;
+    reversed: string;
+  };
+  img!: string;
+  desc!: string[];
 }
 
 class CardPick {
-  card!: Card
-  rev!: boolean
-  showImg!: boolean
-  showDesc!: boolean
+  card!: Card;
+  rev!: boolean;
+  showImg!: boolean;
+  showDesc!: boolean;
 }
 
 const query = reactive({
   count: 1,
   type: true,
-  deck: 'waite'
-})
+  deck: "waite",
+});
 
 const config = {
-  headers: { 'Content-Type': 'application/json' }
-}
+  headers: { "Content-Type": "application/json" },
+};
 
-const activeTab = ref('simple')
+const activeTab = ref("simple");
 
-const result = ref([] as CardPick[])
+const result = ref([] as CardPick[]);
 // for test render
 const tt = ref([
   {
     card: {
       index: 1,
-      name: 'TEST',
-      local: '测试牌1',
+      name: "TEST",
+      local: "测试牌1",
       mean: {
-        upright: '这是正位描述',
-        reversed: '这是逆位描述'
+        upright: "这是正位描述",
+        reversed: "这是逆位描述",
       },
-      img: 'https://dist.rhynia.top/temp/14.png',
-      desc: ['描述的第一行哦', '描述的第二行哦']
+      img: "https://dist.rhynia.top/temp/14.png",
+      desc: ["描述的第一行哦", "描述的第二行哦"],
     },
     showImg: true,
     showDesc: false,
-    rev: false
-  }
-])
+    rev: false,
+  },
+]);
 
-const showDescAll = ref(true)
+const showDescAll = ref(true);
 
-const fullAble = computed(() => query.deck === 'waite' || query.deck === 'bilibili')
+const fullAble = computed(
+  () => query.deck === "waite" || query.deck === "bilibili"
+);
 
-const allowedMax = computed(() => (fullAble.value && query.type ? 78 : 22))
+const allowedMax = computed(() => (fullAble.value && query.type ? 78 : 22));
 
 const tooltip = computed(() =>
-  fullAble.value ? '完整卡组包括小阿尔卡那' : '该卡组只包括大阿尔卡那'
-)
+  fullAble.value ? "完整卡组包括小阿尔卡那" : "该卡组只包括大阿尔卡那"
+);
 
 async function drawDeck() {
   let request = {
     count: query.count,
     type: query.type,
-    deck: query.deck
-  }
-  const respond = (await axios.post('/api/tarot', request, config)).data.res as CardPick[]
+    deck: query.deck,
+  };
+  const respond = (await axios.post("/api/tarot", request, config)).data
+    .res as CardPick[];
   result.value = respond.map((card) => {
-    card.showImg = true
-    card.showDesc = false
-    return card
-  })
+    card.showImg = true;
+    card.showDesc = false;
+    return card;
+  });
 }
 
-const clear = () => (result.value = [])
+const clear = () => (result.value = []);
 
-const revText = (rev: boolean) => (rev ? '(逆位)' : '(正位)')
+const revText = (rev: boolean) => (rev ? "(逆位)" : "(正位)");
 
-const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.card.mean.upright)
+const revDesc = (card: CardPick) =>
+  card.rev ? card.card.mean.reversed : card.card.mean.upright;
 </script>
 
 <template>
@@ -111,7 +115,12 @@ const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.c
             </el-tooltip>
           </el-form-item>
           <el-form-item label="抽牌数量">
-            <el-input-number v-model="query.count" size="small" min="1" :max="allowedMax" />
+            <el-input-number
+              v-model="query.count"
+              size="small"
+              min="1"
+              :max="allowedMax"
+            />
           </el-form-item>
         </el-tab-pane>
       </el-tabs>
@@ -122,11 +131,19 @@ const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.c
     <div v-if="result.length > 0">
       <el-divider />
       <el-row :gutter="10">
-        <el-col :xs="24" :sm="12" :lg="6" v-for="(card, index) in result" :key="index">
+        <el-col
+          :xs="24"
+          :sm="12"
+          :lg="6"
+          v-for="(card, index) in result"
+          :key="index"
+        >
           <el-card>
             <template #header>
               <div @click="card.showImg = !card.showImg">
-                <div class="h5 strong text-primary-emphasis">{{ card.card.local }}</div>
+                <div class="h5 strong text-primary-emphasis">
+                  {{ card.card.local }}
+                </div>
                 <i class="small">{{ index + 1 }} - {{ revText(card.rev) }}</i>
               </div>
             </template>
@@ -147,7 +164,7 @@ const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.c
                       {{ revDesc(card) }}
                     </div>
                     <div class="text-muted" style="font-size: smaller">
-                      {{ ' ' + card.card.desc.join('') }}
+                      {{ " " + card.card.desc.join("") }}
                     </div>
                   </div>
                 </div>
@@ -159,15 +176,24 @@ const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.c
       <div v-if="showDescAll">
         <el-divider />
         <el-row :gutter="10">
-          <el-col :md="24" :lg="12" v-for="(item, index) in result" :key="index">
+          <el-col
+            :md="24"
+            :lg="12"
+            v-for="(item, index) in result"
+            :key="index"
+          >
             <el-card>
               <template #header>
                 <div style="display: flex; justify-content: space-between">
                   <span class="h6">
-                    <span class="h5 text-primary mt-1">{{ index + 1 + '号位 ' }}</span>
+                    <span class="h5 text-primary mt-1">{{
+                      index + 1 + "号位 "
+                    }}</span>
                     <span>
                       {{ item.card.local }}
-                      <span style="font-size: smaller">{{ item.card.name }}</span>
+                      <span style="font-size: smaller">{{
+                        item.card.name
+                      }}</span>
                     </span>
                   </span>
                   <i class="small mt-1">{{ revText(item.rev) }}</i>
@@ -178,7 +204,11 @@ const revDesc = (card: CardPick) => (card.rev ? card.card.mean.reversed : card.c
                   {{ revDesc(item) }}
                 </div>
                 <div v-if="item.card.desc.length > 0">
-                  <div class="text-muted" v-for="(desc, index) in item.card.desc" :key="index">
+                  <div
+                    class="text-muted"
+                    v-for="(desc, index) in item.card.desc"
+                    :key="index"
+                  >
                     {{ desc }}
                   </div>
                 </div>

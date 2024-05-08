@@ -1,49 +1,51 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import toolRouter from '@/router/modules/toolRouter'
-import axios from 'axios'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "@/views/HomeView.vue";
+import toolRouter from "@/router/modules/toolRouter";
+import axios from "axios";
 
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: "/",
+      name: "home",
+      component: HomeView,
     },
     ...toolRouter,
     {
-      path: '/auth',
-      name: 'auth',
-      component: () => import('@/views/auth/AuthView.vue')
+      path: "/auth",
+      name: "auth",
+      component: () => import("@/views/auth/AuthView.vue"),
     },
     {
-      path: '/:pathMatch(.*)',
-      name: '404',
-      component: () => import('@/views/ErrorView.vue')
-    }
-  ]
-})
+      path: "/:pathMatch(.*)",
+      name: "404",
+      component: () => import("@/views/ErrorView.vue"),
+    },
+  ],
+});
 
 router.beforeEach(async (to, _, next) => {
-  const auth = useAuthStore()
+  const auth = useAuthStore();
   if (to.meta.requireToken) {
-    const token = auth.token
+    const token = auth.token;
     if (!token) {
-      next('/auth')
+      next("/auth");
     } else {
-      const { res } = await (await axios.post('/api/auth', { token: token })).data
+      const { res } = await (
+        await axios.post("/api/auth", { token: token })
+      ).data;
       if (res === true) {
-        next()
+        next();
       } else {
-        next('/')
+        next("/");
       }
     }
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

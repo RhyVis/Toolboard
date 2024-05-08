@@ -1,59 +1,59 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import useClipboard from 'vue-clipboard3'
+import { reactive, ref } from "vue";
+import useClipboard from "vue-clipboard3";
 
-import CardFrame from '@/components/frames/CardFrame.vue'
+import CardFrame from "@/components/frames/CardFrame.vue";
 
-const { toClipboard } = useClipboard()
+const { toClipboard } = useClipboard();
 
 const query = reactive({
-  text: '',
-  count: 1
-})
+  text: "",
+  count: 1,
+});
 
-const activeTab = ref('simple')
+const activeTab = ref("simple");
 
-const result = ref([''])
+const result = ref([""]);
 
-const powCount = ref(false)
-const mergeResult = ref(false)
-const copyMode = ref(false)
-const copyButton = ref('复制？😋')
-const copyButtonType = ref('info')
+const powCount = ref(false);
+const mergeResult = ref(false);
+const copyMode = ref(false);
+const copyButton = ref("复制？😋");
+const copyButtonType = ref("info");
 
 function launch() {
-  let repeated = []
-  const { text, count } = query
-  const pow = powCount.value
+  let repeated = [];
+  const { text, count } = query;
+  const pow = powCount.value;
   if (text.length > 0 && count > 0) {
     for (let i = 0; i < (pow ? Math.pow(2, count) : count); i++) {
-      repeated.push(text)
+      repeated.push(text);
     }
-    result.value = repeated
+    result.value = repeated;
   } else {
-    result.value = ['你为何不言不语？']
+    result.value = ["你为何不言不语？"];
   }
-  resetButton()
+  resetButton();
 }
 
 async function copyt() {
   try {
-    const { value } = copyMode
+    const { value } = copyMode;
     if (value) {
-      await toClipboard(result.value.join('\n'))
+      await toClipboard(result.value.join("\n"));
     } else {
-      await toClipboard(result.value.join(''))
+      await toClipboard(result.value.join(""));
     }
-    copyButton.value = '成功！😌'
-    copyButtonType.value = 'success'
+    copyButton.value = "成功";
+    copyButtonType.value = "success";
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 }
 
 function resetButton() {
-  copyButton.value = '复制？😋'
-  copyButtonType.value = 'info'
+  copyButton.value = "复制";
+  copyButtonType.value = "info";
 }
 </script>
 
@@ -71,10 +71,18 @@ function resetButton() {
             ></el-input>
           </el-form-item>
           <el-form-item label="复读数量">
-            <el-input-number v-model="query.count" size="small" :min="1" :max="50" />
+            <el-input-number
+              v-model="query.count"
+              size="small"
+              :min="1"
+              :max="50"
+            />
           </el-form-item>
           <el-form-item label="指数复制">
-            <el-tooltip content="复读的最终数量将为(2^复读数量)" placement="top">
+            <el-tooltip
+              content="复读的最终数量将为(2^复读数量)"
+              placement="top"
+            >
               <el-switch v-model="powCount" />
             </el-tooltip>
           </el-form-item>
@@ -98,7 +106,7 @@ function resetButton() {
     <el-divider />
     <div class="mt-2 mb-2 text-muted">
       <div v-if="mergeResult">
-        <div>{{ result.join('') }}</div>
+        <div>{{ result.join("") }}</div>
       </div>
       <div v-else>
         <div v-for="(item, index) in result" :key="index">{{ item }}</div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import VersionCheck from '@/components/utils/VersionCheck.vue'
-import CardFrame from '@/components/frames/CardFrame.vue'
+import VersionCheck from "@/components/utils/VersionCheck.vue";
+import CardFrame from "@/components/frames/CardFrame.vue";
 </script>
 
 <template>

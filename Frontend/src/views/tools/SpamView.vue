@@ -1,69 +1,69 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import axios from 'axios'
-import useClipboard from 'vue-clipboard3'
+import { reactive, ref } from "vue";
+import axios from "axios";
+import useClipboard from "vue-clipboard3";
 
-import CardFrame from '@/components/frames/CardFrame.vue'
+import CardFrame from "@/components/frames/CardFrame.vue";
 
-const { toClipboard } = useClipboard()
+const { toClipboard } = useClipboard();
 
 const query = reactive({
-  type: 'spam_min',
-  code: '',
-  limit: 1
-})
+  type: "spam_min",
+  code: "",
+  limit: 1,
+});
 
 const result = ref([
-  '快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊',
-  '仅供学习交流使用，由您不当使用造成的后果，将由您承担'
-])
+  "快乐生活每一天，请不要用这个工具的结果来攻击他人哦😊",
+  "仅供学习交流使用，由您不当使用造成的后果，将由您承担",
+]);
 
-const mergeResult = ref(false)
-const copyMode = ref(false)
-const copyButton = ref('复制？😋')
-const copyButtonType = ref('info')
+const mergeResult = ref(false);
+const copyMode = ref(false);
+const copyButton = ref("复制？😋");
+const copyButtonType = ref("info");
 
-const mult = ref(false)
+const mult = ref(false);
 const rept = ref({
   enable: false,
-  count: 1
-})
+  count: 1,
+});
 
 const config = {
-  headers: { 'Content-Type': 'application/json' }
-}
+  headers: { "Content-Type": "application/json" },
+};
 
-const activeTab = ref('spam')
+const activeTab = ref("spam");
 
 function changeTab() {
   switch (activeTab.value) {
-    case 'spam':
-      query.type = 'spam_min'
-      break
-    case 'mmr':
-      query.type = 'genshin'
-      break
+    case "spam":
+      query.type = "spam_min";
+      break;
+    case "mmr":
+      query.type = "genshin";
+      break;
     default:
   }
 }
 
 function resetButton() {
-  copyButton.value = '复制？😋'
-  copyButtonType.value = 'info'
+  copyButton.value = "复制？😋";
+  copyButtonType.value = "info";
 }
 
 async function copyt() {
   try {
-    const { value } = copyMode
+    const { value } = copyMode;
     if (value) {
-      await toClipboard(result.value.join('\n'))
+      await toClipboard(result.value.join("\n"));
     } else {
-      await toClipboard(result.value.join(''))
+      await toClipboard(result.value.join(""));
     }
-    copyButton.value = '成功！😌'
-    copyButtonType.value = 'success'
+    copyButton.value = "成功！😌";
+    copyButtonType.value = "success";
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 }
 
@@ -71,32 +71,33 @@ async function fetchSpam() {
   const request = {
     type: query.type,
     code: query.code,
-    limit: mult.value ? query.limit : 1
-  }
-  const respond = (await axios.post('/api/spam', request, config)).data.res as Array<Result>
-  let textList = respond.map((obj) => obj.text.split(/\\n|\n/g)).flat()
+    limit: mult.value ? query.limit : 1,
+  };
+  const respond = (await axios.post("/api/spam", request, config)).data
+    .res as Array<Result>;
+  let textList = respond.map((obj) => obj.text.split(/\\n|\n/g)).flat();
   if (rept.value.enable) {
     result.value = textList
       .map((text) => {
         if (mergeResult.value) {
-          return text.repeat(rept.value.count)
+          return text.repeat(rept.value.count);
         } else {
-          let repeated = []
+          let repeated = [];
           for (let i = 0; i < rept.value.count; i++) {
-            repeated.push(text)
+            repeated.push(text);
           }
-          return repeated
+          return repeated;
         }
       })
-      .flat()
+      .flat();
   } else {
-    result.value = textList
+    result.value = textList;
   }
-  resetButton()
+  resetButton();
 }
 
 class Result {
-  text!: string
+  text!: string;
 }
 </script>
 
@@ -117,7 +118,7 @@ class Result {
         </el-tab-pane>
         <el-tab-pane label="二游笑话" name="mmr">
           <el-form-item label="使用说明">
-            <span
+            <span style="text-align: left"
               >介于各路孝子挂对面的时候都是截图挂人，所以这数据库里面很多东西也都是OCR扫出来的，有错字就当二游痴子没文化吧</span
             >
           </el-form-item>
@@ -146,7 +147,12 @@ class Result {
         <el-switch v-model="mult" />
       </el-form-item>
       <el-form-item label="数量" v-if="mult">
-        <el-input-number v-model="query.limit" size="small" :min="1" :max="10" />
+        <el-input-number
+          v-model="query.limit"
+          size="small"
+          :min="1"
+          :max="10"
+        />
       </el-form-item>
       <el-form-item label="连续复读">
         <el-switch v-model="rept.enable" />
