@@ -68,7 +68,7 @@ function resetButton() {
               type="textarea"
               placeholder="你不输入你用什么工具？"
               required
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="复读数量">
             <el-input-number

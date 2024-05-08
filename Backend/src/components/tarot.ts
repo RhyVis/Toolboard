@@ -56,7 +56,7 @@ class Deck {
 
 var deckSet: Record<string, Deck> = {};
 
-const initTarot = async (map: any) => {
+const initTarot = async (map: Record<string, string>) => {
   let endpoint: string = map.tarot;
   try {
     let { mappings } = (

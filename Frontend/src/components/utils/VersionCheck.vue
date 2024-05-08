@@ -71,6 +71,8 @@ const update = () => {
 
 <template>
   <div @click="update">
-    <el-tag :type="versionRemoteF.type">{{ versionRemoteF.text }}</el-tag>
+    <el-tag style="user-select: none" :type="versionRemoteF.type">
+      {{ versionRemoteF.text }}
+    </el-tag>
   </div>
 </template>

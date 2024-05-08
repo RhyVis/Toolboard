@@ -4,12 +4,13 @@ import axios from "axios";
 import useClipboard from "vue-clipboard3";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
+import SelectSimple from "@/components/utils/SelectSimple.vue";
 
 const { toClipboard } = useClipboard();
 
 const query = reactive({
   type: "spam_min",
-  code: "",
+  code: "none",
   limit: 1,
 });
 
@@ -29,13 +30,17 @@ const rept = ref({
   count: 1,
 });
 
-const config = {
-  headers: { "Content-Type": "application/json" },
-};
+const codeTypes = [
+  { value: "none", label: "直白对决😅" },
+  { value: "nmsl", label: "抽象加密🤗" },
+  { value: "trad", label: "繁体传统🤔" },
+  { value: "sprk", label: "火星密文😘" },
+  { value: "unic", label: "形近转换🧐" },
+];
 
 const activeTab = ref("spam");
 
-function changeTab() {
+const changeTab = () => {
   switch (activeTab.value) {
     case "spam":
       query.type = "spam_min";
@@ -45,14 +50,14 @@ function changeTab() {
       break;
     default:
   }
-}
+};
 
 function resetButton() {
   copyButton.value = "复制？😋";
   copyButtonType.value = "info";
 }
 
-async function copyt() {
+const copyt = async () => {
   try {
     const { value } = copyMode;
     if (value) {
@@ -65,15 +70,15 @@ async function copyt() {
   } catch (e) {
     console.log(e);
   }
-}
+};
 
-async function fetchSpam() {
+const fetchSpam = async () => {
   const request = {
     type: query.type,
     code: query.code,
     limit: mult.value ? query.limit : 1,
   };
-  const respond = (await axios.post("/api/spam", request, config)).data
+  const respond = (await axios.post("/api/spam", request)).data
     .res as Array<Result>;
   let textList = respond.map((obj) => obj.text.split(/\\n|\n/g)).flat();
   if (rept.value.enable) {
@@ -94,17 +99,18 @@ async function fetchSpam() {
     result.value = textList;
   }
   resetButton();
-}
+};
 
-class Result {
-  text!: string;
-}
+type Result = {
+  text: string;
+};
 </script>
 
 <template>
   <CardFrame title="弹药库">
     <el-form :model="query" label-width="auto">
       <el-tabs v-model="activeTab" @tab-change="changeTab">
+        <!--Spam-->
         <el-tab-pane label="祖安特区" name="spam">
           <el-form-item label="使用说明">
             <span>高强度的版本很容易被夹，建议加上转义</span>
@@ -116,11 +122,12 @@ class Result {
             </el-radio-group>
           </el-form-item>
         </el-tab-pane>
+        <!--MMR-->
         <el-tab-pane label="二游笑话" name="mmr">
           <el-form-item label="使用说明">
-            <span style="text-align: left"
-              >介于各路孝子挂对面的时候都是截图挂人，所以这数据库里面很多东西也都是OCR扫出来的，有错字就当二游痴子没文化吧</span
-            >
+            <span style="text-align: left">
+              介于各路孝子挂对面的时候都是截图挂人，所以这数据库里面很多东西也都是OCR扫出来的，有错字就当二游痴子没文化吧
+            </span>
           </el-form-item>
           <el-form-item label="选择游戏">
             <el-radio-group v-model="query.type">
@@ -135,13 +142,7 @@ class Result {
         </el-tab-pane>
       </el-tabs>
       <el-form-item label="加密方式">
-        <el-radio-group v-model="query.code">
-          <el-radio-button label="直白对决😅" value="" />
-          <el-radio-button label="抽象加密🤗" value="nmsl" />
-          <el-radio-button label="繁体传统🤔" value="trad" />
-          <el-radio-button label="火星密文😘" value="sprk" />
-          <el-radio-button label="形近转换🧐" value="unic" />
-        </el-radio-group>
+        <SelectSimple v-model:select="query.code" :options="codeTypes" />
       </el-form-item>
       <el-form-item label="妙语连珠">
         <el-switch v-model="mult" />

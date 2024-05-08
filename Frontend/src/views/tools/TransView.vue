@@ -5,6 +5,7 @@ import { reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
+import SelectSimple from "@/components/utils/SelectSimple.vue";
 
 const query = reactive({
   endpoint: "",
@@ -26,18 +27,18 @@ const titleMis = ref("");
 const result = ref("");
 
 const options = ref([
-  { id: "EN", label: "English" },
-  { id: "ZH", label: "Chinese" },
-  { id: "DE", label: "Deutsch" },
-  { id: "ES", label: "Español" },
-  { id: "FR", label: "French" },
-  { id: "IT", label: "Italian" },
-  { id: "JA", label: "Japanese" },
-  { id: "KO", label: "Korean" },
-  { id: "NL", label: "Dutch" },
-  { id: "PL", label: "Polish" },
-  { id: "PT", label: "Portuguese" },
-  { id: "RU", label: "Russian" },
+  { value: "EN", label: "English" },
+  { value: "ZH", label: "Chinese" },
+  { value: "DE", label: "Deutsch" },
+  { value: "ES", label: "Español" },
+  { value: "FR", label: "French" },
+  { value: "IT", label: "Italian" },
+  { value: "JA", label: "Japanese" },
+  { value: "KO", label: "Korean" },
+  { value: "NL", label: "Dutch" },
+  { value: "PL", label: "Polish" },
+  { value: "PT", label: "Portuguese" },
+  { value: "RU", label: "Russian" },
 ]);
 
 const translate = async () => {
@@ -99,12 +100,11 @@ const translate = async () => {
     query.source_lang = storeSource;
     query.target_lang = storeTarget;
   }
-  let tokenHash = CryptoJS.SHA1(auth.token).toString();
+  const tokenHash = CryptoJS.SHA1(auth.token).toString();
   await axios
     .post("/api/auth/trans", { value: tokenHash, hash: true })
     .then((respond) => {
       const dToken = respond.data.res;
-      //console.log(dToken)
       if (dToken) {
         query.token = dToken.token;
         query.endpoint = dToken.endpoint;
@@ -129,34 +129,10 @@ const translate = async () => {
         />
       </el-form-item>
       <el-form-item label="原始语言">
-        <el-select
-          v-model="query.source_lang"
-          value-key="id"
-          placeholder="Select"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.id"
-            :label="item.label"
-            :value="item.id"
-          />
-        </el-select>
+        <SelectSimple v-model:select="query.source_lang" :options="options" />
       </el-form-item>
       <el-form-item label="目标语言">
-        <el-select
-          v-model="query.target_lang"
-          value-key="id"
-          placeholder="Select"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.id"
-            :label="item.label"
-            :value="item.id"
-          />
-        </el-select>
+        <SelectSimple v-model:select="query.target_lang" :options="options" />
       </el-form-item>
       <el-form-item label="翻译">
         <el-button type="primary" @click="translate">Go</el-button>

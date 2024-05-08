@@ -72,6 +72,11 @@ let linkMap: Record<string, string> = {};
   }
   console.log("");
   console.log("Preload complete");
+  if (process.env.NODE_ENV === "development") {
+    const addr = server.address();
+    const bind = typeof addr === "string" ? +addr : addr!.port;
+    console.log(`Test on http://localhost:${bind}`);
+  }
 });
 
 app.set("port", port);

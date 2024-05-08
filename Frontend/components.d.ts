@@ -35,6 +35,9 @@ declare module 'vue' {
     MainHeader: typeof import('./src/components/basic/MainHeader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectSimple: typeof import('./src/components/utils/SelectSimple.vue')['default']
+    TarotDesc: typeof import('./src/components/display/tarot/TarotDesc.vue')['default']
+    TarotMain: typeof import('./src/components/display/tarot/TarotMain.vue')['default']
     VersionCheck: typeof import('./src/components/utils/VersionCheck.vue')['default']
   }
 }

@@ -1,8 +1,5 @@
-import pinyin from "pinyin";
 import cnchar from "cnchar";
 import trad from "cnchar-trad";
-import fs from "fs";
-import path from "path";
 
 cnchar.use(trad);
 

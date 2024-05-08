@@ -10,7 +10,7 @@ const dbName = "spam.db";
 const tmpDir = os.tmpdir();
 let database: Database;
 
-const initSpam = async (map: any) => {
+const initSpam = async (map: Record<string, string>) => {
   let endpoint = map.spam;
   let folder = fs.mkdtempSync(path.join(tmpDir));
   let tgt = path.join(folder, dbName);
@@ -68,7 +68,7 @@ async function query(type: string, limit: number): Promise<Result[]> {
   let sql = `SELECT text FROM ${type} ORDER BY RANDOM() LIMIT ${limit}`;
   return new Promise((res, _) => {
     try {
-      database.all(sql, (err, rows) => {
+      database.all(sql, (_, rows) => {
         res(rows as Result[]);
       });
     } catch (e) {

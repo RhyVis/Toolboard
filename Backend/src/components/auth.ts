@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 let tokenGlobalHash = "";
 
-const initAuth = async (map: any) => {
+const initAuth = async (_: Record<string, string>) => {
   let token = process.env.TOKEN;
   if (!token) {
     console.log("Must set the token!");
