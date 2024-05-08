@@ -29,6 +29,10 @@ router.post("/", (req, res) => {
       picked = drawTarot("arknights", count);
       break;
     }
+    case "shadowscapes": {
+      picked = drawTarot("shadowscapes", count);
+      break;
+    }
     default: {
       picked = drawTarot("waite", count);
       break;

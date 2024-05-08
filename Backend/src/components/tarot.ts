@@ -45,11 +45,19 @@ class Deck {
   name!: string;
   type!: string;
   imgr!: string;
+  hasRev!: boolean;
   deck!: Card[];
-  constructor(name: string, type: string, imgr: string, deck: Card[]) {
+  constructor(
+    name: string,
+    type: string,
+    imgr: string,
+    hasRev: boolean,
+    deck: Card[]
+  ) {
     this.name = name;
     this.type = type;
     this.imgr = imgr;
+    this.hasRev = hasRev;
     this.deck = deck;
   }
 }
@@ -66,21 +74,29 @@ const initTarot = async (map: Record<string, string>) => {
       let temp: Deck = (
         await axios.get(joinUrl(endpoint, "conf", mappings[key]))
       ).data;
-      let { type } = temp;
+      let { type, hasRev } = temp;
       let imgEndpoint = joinUrl(endpoint, "img");
       temp.imgr = imgEndpoint;
       if (type === "full") {
         let { name, deck } = temp;
         let alt = `${name}_main`;
-        let main = new Deck(alt, "main", imgEndpoint, deck.slice(0, 22));
+        let main = new Deck(
+          alt,
+          "main",
+          imgEndpoint,
+          hasRev,
+          deck.slice(0, 22)
+        );
         deckSet[alt] = main;
       }
       deckSet[key] = temp;
     }
     console.log("Loaded All Decks:");
     for (let n in deckSet) {
-      let { name, type, deck } = deckSet[n];
-      console.log(`${name} (${type}, ${deck.length})`);
+      let { name, type, deck, hasRev } = deckSet[n];
+      console.log(
+        `${name} (${type}, ${deck.length}${hasRev ? "" : " - No reverse"})`
+      );
     }
   } catch (e) {
     let { code, config } = e as AxiosError;
@@ -145,7 +161,7 @@ function drawCard(deck: Deck, shuf: boolean, num: number, indexes: number[]) {
       new CardPick(
         cards[index],
         joinUrl(deck.imgr, cards[index].img),
-        randomBoolean()
+        deck.hasRev ? randomBoolean() : false
       )
     )
   );

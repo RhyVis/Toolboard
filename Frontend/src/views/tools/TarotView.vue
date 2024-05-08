@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { computed, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import axios from "axios";
-import type { Card, CardPick } from "@/misc/tarotType";
+import { useTarotStore } from "@/stores/tools/tarot";
+import type { CardPick } from "@/misc/tarotType";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
 import TarotMain from "@/components/display/tarot/TarotMain.vue";
 import TarotDesc from "@/components/display/tarot/TarotDesc.vue";
 import SelectSimple from "@/components/utils/SelectSimple.vue";
+
+const store = useTarotStore();
 
 const query = reactive({
   count: 1,
@@ -18,6 +21,7 @@ const activeTab = ref("simple");
 
 const deckTypes = [
   { value: "waite", label: "韦特" },
+  { value: "shadowscapes", label: "花影" },
   { value: "bilibili", label: "幻星集" },
   { value: "bluearchive", label: "碧蓝档案" },
   { value: "arknights", label: "明日方舟" },
@@ -27,7 +31,10 @@ const result = ref([] as CardPick[]);
 
 const showDescAll = ref(true);
 const fullAble = computed(
-  () => query.deck === "waite" || query.deck === "bilibili"
+  () =>
+    query.deck === "waite" ||
+    query.deck === "bilibili" ||
+    query.deck === "shadowscapes"
 );
 const allowedMax = computed(() => (fullAble.value && query.type ? 78 : 22));
 const tooltip = computed(() =>
@@ -35,6 +42,7 @@ const tooltip = computed(() =>
 );
 
 const drawDeck = async () => {
+  store.deck = query.deck;
   const respond = (await axios.post("/api/tarot", query)).data
     .res as CardPick[];
   result.value = respond.map((card) => {
@@ -43,7 +51,10 @@ const drawDeck = async () => {
     return card;
   });
 };
-const clear = () => (result.value = []);
+
+onMounted(() => {
+  query.deck = store.deck;
+});
 </script>
 
 <template>

@@ -3,9 +3,13 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import { reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { useTranslStore } from "@/stores/tools/trans";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
 import SelectSimple from "@/components/utils/SelectSimple.vue";
+import CopyButton from "@/components/utils/CopyButton.vue";
+
+const store = useTranslStore();
 
 const query = reactive({
   endpoint: "",
@@ -14,16 +18,10 @@ const query = reactive({
   source_lang: "EN",
   target_lang: "ZH",
 });
-const cache = reactive({
-  text: "",
-  sl: "",
-  tl: "",
-});
 
 const auth = useAuthStore();
 
 const titleMis = ref("");
-
 const result = ref("");
 
 const options = ref([
@@ -44,12 +42,12 @@ const options = ref([
 const translate = async () => {
   const { text, source_lang, target_lang } = query;
   if (
-    text === cache.text &&
-    source_lang === cache.sl &&
-    target_lang === cache.tl
+    text === store.text &&
+    source_lang === store.source_lang &&
+    target_lang === store.target_lang
   ) {
     console.log("Read cached value");
-    result.value = cache.text;
+    result.value = store.text;
   } else {
     if (text.length == 0) {
       result.value = "不能翻译空句子";
@@ -60,11 +58,7 @@ const translate = async () => {
       return;
     }
 
-    localStorage.setItem("trans_source_lang", source_lang);
-    localStorage.setItem("trans_target_lang", target_lang);
-    cache.sl = source_lang;
-    cache.tl = target_lang;
-
+    store.updateLang(source_lang, target_lang);
     result.value = "别急，加载中";
 
     const { data, status, statusText } = await axios.post(
@@ -86,7 +80,7 @@ const translate = async () => {
       const formatted = `${data.data}\n-------------\n${data.alternatives.join(
         "\n"
       )}`;
-      result.value = cache.text = formatted;
+      result.value = store.text = formatted;
     } else {
       result.value = `${data.id}: ${data.method} [Translate Failed]\nType: ${status} - ${statusText}`;
     }
@@ -94,8 +88,8 @@ const translate = async () => {
 };
 
 (async function () {
-  const storeSource = localStorage.getItem("trans_source_lang");
-  const storeTarget = localStorage.getItem("trans_target_lang");
+  const storeSource = store.getLang[0];
+  const storeTarget = store.getLang[1];
   if (storeSource != undefined && storeTarget != undefined) {
     query.source_lang = storeSource;
     query.target_lang = storeTarget;
@@ -136,8 +130,9 @@ const translate = async () => {
       </el-form-item>
       <el-form-item label="翻译">
         <el-button type="primary" @click="translate">Go</el-button>
+        <CopyButton :target="result.split('\n')[0]" />
       </el-form-item>
-      <el-form-item label="翻译">
+      <el-form-item label="结果">
         <el-input :value="result" :rows="5" type="textarea" readonly />
       </el-form-item>
     </el-form>
