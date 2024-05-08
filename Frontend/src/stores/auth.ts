@@ -1,5 +1,5 @@
 import axios from "axios";
-import crypto from "crypto";
+import CryptoJS from "crypto-js";
 import { defineStore } from "pinia";
 
 /**
@@ -10,7 +10,7 @@ import { defineStore } from "pinia";
 async function validate(token: string) {
   if (token.length > 0) {
     try {
-      let hashCode = crypto.createHash("sha1").update(token).digest("hex");
+      let hashCode = CryptoJS.SHA1(token).toString();
       return (await axios.post("/api/auth", { value: hashCode, hash: true }))
         .data as boolean;
     } catch (e) {

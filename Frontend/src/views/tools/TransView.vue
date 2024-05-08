@@ -13,6 +13,11 @@ const query = reactive({
   source_lang: "EN",
   target_lang: "ZH",
 });
+const cache = reactive({
+  text: "",
+  sl: "",
+  tl: "",
+});
 
 const auth = useAuthStore();
 
@@ -37,41 +42,53 @@ const options = ref([
 
 const translate = async () => {
   const { text, source_lang, target_lang } = query;
-  if (text.length == 0) {
-    result.value = "不能翻译空句子";
-    return;
-  }
-  if (source_lang === target_lang) {
-    result.value = "你喜欢原地翻译？";
-    return;
-  }
-
-  localStorage.setItem("trans_source_lang", source_lang);
-  localStorage.setItem("trans_target_lang", target_lang);
-
-  result.value = "别急，加载中";
-
-  const { data, status, statusText } = await axios.post(
-    query.endpoint,
-    {
-      text: text.replace(/[\r\n]/g, " "),
-      source_lang: source_lang,
-      target_lang: target_lang,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${query.token}`,
-      },
-    }
-  );
-  console.log(`${data.id}: ${data.method}`);
-  if (data.data != undefined && data.alternatives != null) {
-    result.value = `${data.data}\n-------------\n${data.alternatives.join(
-      "\n"
-    )}`;
+  if (
+    text === cache.text &&
+    source_lang === cache.sl &&
+    target_lang === cache.tl
+  ) {
+    console.log("Read cached value");
+    result.value = cache.text;
   } else {
-    result.value = `${data.id}: ${data.method} [Translate Failed]\nType: ${status} - ${statusText}`;
+    if (text.length == 0) {
+      result.value = "不能翻译空句子";
+      return;
+    }
+    if (source_lang === target_lang) {
+      result.value = "你喜欢原地翻译？";
+      return;
+    }
+
+    localStorage.setItem("trans_source_lang", source_lang);
+    localStorage.setItem("trans_target_lang", target_lang);
+    cache.sl = source_lang;
+    cache.tl = target_lang;
+
+    result.value = "别急，加载中";
+
+    const { data, status, statusText } = await axios.post(
+      query.endpoint,
+      {
+        text: text.replace(/[\r\n]/g, " "),
+        source_lang: source_lang,
+        target_lang: target_lang,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${query.token}`,
+        },
+      }
+    );
+    console.log(`${data.id}: ${data.method}`);
+    if (data.data != undefined && data.alternatives != null) {
+      const formatted = `${data.data}\n-------------\n${data.alternatives.join(
+        "\n"
+      )}`;
+      result.value = cache.text = formatted;
+    } else {
+      result.value = `${data.id}: ${data.method} [Translate Failed]\nType: ${status} - ${statusText}`;
+    }
   }
 };
 
