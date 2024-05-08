@@ -1,19 +1,19 @@
-import { joinUrl } from '@/bin/server';
+import { joinUrl } from "@/bin/server";
 import axios, { AxiosError } from "axios";
 
 class Armor {
   id!: string;
   loc!: string;
-  desc!: string
+  desc!: string;
 }
 
 class Majo {
   name!: string;
   level!: string;
   armor!: {
-    head: Armor
-    body: Armor
-  }
+    head: Armor;
+    body: Armor;
+  };
 }
 
 var data = {};
@@ -21,9 +21,11 @@ var data = {};
 const initMajo = async (map: any) => {
   let endpoint = map.majo;
   try {
-    let { mappings } = (await axios.get(joinUrl(endpoint, 'conf', '_conf.json'))).data;
+    let { mappings } = (
+      await axios.get(joinUrl(endpoint, "conf", "_conf.json"))
+    ).data;
     for (let key in mappings) {
-      let { data } = await axios.get(joinUrl(endpoint, 'conf', mappings[key]));
+      let { data } = await axios.get(joinUrl(endpoint, "conf", mappings[key]));
       console.log(`Data in ${mappings[key]}`);
       //console.log(data);
     }
@@ -34,6 +36,6 @@ const initMajo = async (map: any) => {
     console.log(code);
     process.exit(1);
   }
-}
+};
 
-export { initMajo }
+export { initMajo };

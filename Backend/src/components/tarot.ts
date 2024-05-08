@@ -1,6 +1,6 @@
-import { joinUrl } from '@/bin/server';
-import { shuffle } from 'lodash';
-import axios, { AxiosError } from 'axios';
+import { joinUrl } from "@/bin/server";
+import { shuffle } from "lodash";
+import axios, { AxiosError } from "axios";
 
 class Card {
   index!: number;
@@ -12,13 +12,20 @@ class Card {
   };
   img!: string;
   desc!: string[];
-  constructor (index: number, name: string, local: string, upright: string, reversed: string, desc: string[]) {
+  constructor(
+    index: number,
+    name: string,
+    local: string,
+    upright: string,
+    reversed: string,
+    desc: string[]
+  ) {
     this.index = index;
     this.name = name;
     this.local = local;
     this.mean = {
       upright: upright,
-      reversed: reversed
+      reversed: reversed,
     };
     this.desc = desc;
   }
@@ -27,7 +34,7 @@ class Card {
 class CardPick {
   card!: Card;
   rev!: boolean;
-  constructor (card: Card, img: string, rev: boolean) {
+  constructor(card: Card, img: string, rev: boolean) {
     this.card = card;
     this.rev = rev;
     this.card.img = img;
@@ -39,7 +46,7 @@ class Deck {
   type!: string;
   imgr!: string;
   deck!: Card[];
-  constructor (name: string, type: string, imgr: string, deck: Card[]) {
+  constructor(name: string, type: string, imgr: string, deck: Card[]) {
     this.name = name;
     this.type = type;
     this.imgr = imgr;
@@ -52,21 +59,25 @@ var deckSet: Record<string, Deck> = {};
 const initTarot = async (map: any) => {
   let endpoint: string = map.tarot;
   try {
-    let { mappings } = (await axios.get(joinUrl(endpoint, 'conf', '_conf.json'))).data;
+    let { mappings } = (
+      await axios.get(joinUrl(endpoint, "conf", "_conf.json"))
+    ).data;
     for (let key in mappings) {
-      let temp: Deck = (await axios.get(joinUrl(endpoint, 'conf', mappings[key]))).data;
+      let temp: Deck = (
+        await axios.get(joinUrl(endpoint, "conf", mappings[key]))
+      ).data;
       let { type } = temp;
-      let imgEndpoint = joinUrl(endpoint, 'img');
+      let imgEndpoint = joinUrl(endpoint, "img");
       temp.imgr = imgEndpoint;
-      if (type === 'full') {
+      if (type === "full") {
         let { name, deck } = temp;
         let alt = `${name}_main`;
-        let main = new Deck(alt, 'main', imgEndpoint, deck.slice(0, 22));
+        let main = new Deck(alt, "main", imgEndpoint, deck.slice(0, 22));
         deckSet[alt] = main;
       }
       deckSet[key] = temp;
     }
-    console.log('Loaded All Decks:');
+    console.log("Loaded All Decks:");
     for (let n in deckSet) {
       let { name, type, deck } = deckSet[n];
       console.log(`${name} (${type}, ${deck.length})`);
@@ -77,7 +88,7 @@ const initTarot = async (map: any) => {
     console.log(code);
     process.exit(1);
   }
-}
+};
 
 /**
  * Pick cards based on deck
@@ -89,7 +100,7 @@ const initTarot = async (map: any) => {
 function drawTarot(deck: string, count: number): CardPick[] {
   let picked = drawCard(deckSet[deck], true, count, []);
   console.log(`Picked ${picked.length} cards: `);
-  console.log(picked.map(obj => obj.card.local));
+  console.log(picked.map((obj) => obj.card.local));
   return picked;
 }
 
@@ -101,7 +112,7 @@ function drawCard(deck: Deck, shuf: boolean, num: number, indexes: number[]) {
     cards = shuffle(cards);
   }
   console.log(`Deck should be ${cards.length} cards:`);
-  console.log(cards.map(obj => obj.local));
+  console.log(cards.map((obj) => obj.local));
   num = Math.min(num, cards.length);
   let indexRaw = indexes;
 
@@ -128,12 +139,20 @@ function drawCard(deck: Deck, shuf: boolean, num: number, indexes: number[]) {
     indexSet.add(index);
   }
 
-  console.log(`Going to pick ${Array.from(indexSet).join('-')} of deck.`);
-  indexSet.forEach(index => drawn.push(new CardPick(cards[index], joinUrl(deck.imgr, cards[index].img), randomBoolean())));
+  console.log(`Going to pick ${Array.from(indexSet).join("-")} of deck.`);
+  indexSet.forEach((index) =>
+    drawn.push(
+      new CardPick(
+        cards[index],
+        joinUrl(deck.imgr, cards[index].img),
+        randomBoolean()
+      )
+    )
+  );
 
   return drawn;
 }
 
 const randomBoolean = () => Math.random() >= 0.5;
 
-export { initTarot, drawTarot, CardPick }
+export { initTarot, drawTarot, CardPick };

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import axios from "axios";
+import CryptoJS from "crypto-js";
 import { reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
@@ -81,17 +82,20 @@ const translate = async () => {
     query.source_lang = storeSource;
     query.target_lang = storeTarget;
   }
-  await axios.post("/api/auth/trans", { token: auth.token }).then((respond) => {
-    const dToken = respond.data.res;
-    //console.log(dToken)
-    if (dToken) {
-      query.token = dToken.token;
-      query.endpoint = dToken.endpoint;
-      titleMis.value = "";
-    } else {
-      titleMis.value = "(未获取Token)";
-    }
-  });
+  let tokenHash = CryptoJS.SHA1(auth.token).toString();
+  await axios
+    .post("/api/auth/trans", { value: tokenHash, hash: true })
+    .then((respond) => {
+      const dToken = respond.data.res;
+      //console.log(dToken)
+      if (dToken) {
+        query.token = dToken.token;
+        query.endpoint = dToken.endpoint;
+        titleMis.value = "";
+      } else {
+        titleMis.value = "(未获取Token)";
+      }
+    });
 })();
 </script>
 

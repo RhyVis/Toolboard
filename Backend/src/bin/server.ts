@@ -1,40 +1,45 @@
 #!/usr/bin/env node
 
-require('module-alias/register')
+require("module-alias/register");
 
-import { initTarot } from '@/components/tarot';
-import { initSpam } from '@/components/spam';
-import { initMajo } from '@/components/majo';
-import { initAuth } from '@/components/auth';
-import axios, { AxiosError } from 'axios';
-import app from '@/app';
-import debugLib from 'debug';
-import http from 'http';
-import figlet from 'figlet';
+import { initTarot } from "@/components/tarot";
+import { initSpam } from "@/components/spam";
+import { initMajo } from "@/components/majo";
+import { initAuth } from "@/components/auth";
+import axios, { AxiosError } from "axios";
+import app from "@/app";
+import debugLib from "debug";
+import http from "http";
+import figlet from "figlet";
 
-const debug = debugLib('res-backend:server');
-const port = normalizePort(process.env.PORT || '3800');
-const endpoint = process.env.ENDPOINT || 'UNSET';
+const debug = debugLib("res-backend:server");
+const port = normalizePort(process.env.PORT || "3800");
+const endpoint = process.env.ENDPOINT || "UNSET";
 
 let resourceMap: Record<string, string> = {};
 let linkMap: Record<string, string> = {};
 
 // Setup
-(async (resourceMap: Record<string, string>, linkMap: Record<string, string>) => {
-  if (endpoint === 'UNSET') {
-    console.error('No avaliable endpoint set');
+(async (
+  resourceMap: Record<string, string>,
+  linkMap: Record<string, string>
+) => {
+  if (endpoint === "UNSET") {
+    console.error("No avaliable endpoint set");
     process.exit(1);
   }
   console.log(
     figlet.textSync("Resolvo", {
-        font: "3D Diagonal",
-        horizontalLayout: "default",
-        verticalLayout: "default"
+      font: "3D Diagonal",
+      horizontalLayout: "default",
+      verticalLayout: "default",
     })
   );
   try {
-    let { version, mappings, links } = (await axios.get(joinUrl(endpoint, 'map.json'))).data;
-    console.log(`Fetched global mappings of version ${version}`)
+    let { version, mappings, links } = (
+      await axios.get(joinUrl(endpoint, "map.json"))
+    ).data;
+    console.log(`Fetched global mappings of version ${version}`);
     for (let key in mappings) {
       resourceMap[key] = joinUrl(endpoint, mappings[key]);
     }
@@ -48,36 +53,36 @@ let linkMap: Record<string, string> = {};
     process.exit(1);
   }
 })(resourceMap, linkMap).then(async () => {
-  console.log('');
-  console.log('On auth load:');
+  console.log("");
+  console.log("On auth load:");
   await initAuth(resourceMap);
-  console.log('');
-  console.log('On tarot load:');
+  console.log("");
+  console.log("On tarot load:");
   await initTarot(resourceMap);
-  console.log('');
-  console.log('On spam load:');
+  console.log("");
+  console.log("On spam load:");
   await initSpam(resourceMap);
-  console.log('');
-  console.log('On majo load:');
+  console.log("");
+  console.log("On majo load:");
   await initMajo(resourceMap);
-  console.log('');
-  console.log('With links listed');
+  console.log("");
+  console.log("With links listed");
   for (let key in linkMap) {
     console.log(`[${key}]: ${linkMap[key]}`);
   }
-  console.log('');
-  console.log('Preload complete');
+  console.log("");
+  console.log("Preload complete");
 });
 
-app.set('port', port);
+app.set("port", port);
 
 var server = http.createServer(app);
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.on("error", onError);
+server.on("listening", onListening);
 
-function normalizePort(val:any) {
+function normalizePort(val: any) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -93,22 +98,20 @@ function normalizePort(val:any) {
   return false;
 }
 
-function onError(error:any) {
-  if (error.syscall !== 'listen') {
+function onError(error: any) {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
     default:
       throw error;
@@ -117,14 +120,12 @@ function onError(error:any) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr!.port;
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr!.port;
   console.log(`Listening on ${bind}`);
 }
 
 function joinUrl(base: string, ...extra: string[]) {
-  return `${base}/${extra.join('/')}`;
+  return `${base}/${extra.join("/")}`;
 }
 
-export { resourceMap, linkMap, joinUrl }
+export { resourceMap, linkMap, joinUrl };
