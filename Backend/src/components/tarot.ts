@@ -63,6 +63,7 @@ class Deck {
 }
 
 var deckSet: Record<string, Deck> = {};
+var deckMap: Record<string, { deck: string; full: boolean }> = {};
 
 const initTarot = async (map: Record<string, string>) => {
   let endpoint: string = map.tarot;
@@ -171,4 +172,4 @@ function drawCard(deck: Deck, shuf: boolean, num: number, indexes: number[]) {
 
 const randomBoolean = () => Math.random() >= 0.5;
 
-export { initTarot, drawTarot, CardPick };
+export { initTarot, drawTarot, CardPick, deckSet };

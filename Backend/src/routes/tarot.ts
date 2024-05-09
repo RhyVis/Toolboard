@@ -1,5 +1,5 @@
 import express from "express";
-import { drawTarot, CardPick } from "@/components/tarot";
+import { drawTarot, deckSet, CardPick } from "@/components/tarot";
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.get("/", (_, res) => {
 router.post("/", (req, res) => {
   const { deck, type, count } = req.body;
   let picked: CardPick[];
+  let key = deck;
   switch (deck) {
     case "waite": {
       picked = drawTarot(type ? "waite" : "waite_main", count);
@@ -21,16 +22,16 @@ router.post("/", (req, res) => {
       picked = drawTarot(type ? "bilibili" : "bilibili_main", count);
       break;
     }
+    case "shadowscapes": {
+      picked = drawTarot(type ? "shadowscapes" : "shadowscapes_main", count);
+      break;
+    }
     case "bluearchive": {
       picked = drawTarot("bluearchive", count);
       break;
     }
     case "arknights": {
       picked = drawTarot("arknights", count);
-      break;
-    }
-    case "shadowscapes": {
-      picked = drawTarot("shadowscapes", count);
       break;
     }
     default: {
