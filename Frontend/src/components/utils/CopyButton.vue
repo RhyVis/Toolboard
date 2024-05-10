@@ -2,6 +2,11 @@
 import { computed, ref } from "vue";
 import useClipboard from "vue-clipboard3";
 
+interface State {
+  type: string;
+  value: string;
+}
+
 const props = defineProps({
   target: {
     type: String,
@@ -14,7 +19,7 @@ const props = defineProps({
 });
 
 const state = ref(0);
-const display = computed(() => {
+const display = computed<State>(() => {
   switch (state.value) {
     case 0:
       return {

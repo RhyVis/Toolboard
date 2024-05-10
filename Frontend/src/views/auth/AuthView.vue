@@ -38,6 +38,7 @@ const verifyElement = computed(() => {
 
 const verify = async () => {
   const { token } = query;
+  clearState.value = 0;
   if (token.length > 0 && token != "不要空置") {
     try {
       auth.updateToken(token);

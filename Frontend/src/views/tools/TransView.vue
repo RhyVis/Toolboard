@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import axios from "axios";
 import CryptoJS from "crypto-js";
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useTranslStore } from "@/stores/tools/trans";
 
@@ -41,6 +41,7 @@ const options = ref([
 
 const translate = async () => {
   const { text, source_lang, target_lang } = query;
+  // Cache
   if (
     text === store.text &&
     source_lang === store.source_lang &&
@@ -49,6 +50,7 @@ const translate = async () => {
     console.log("Read cached value");
     result.value = store.text;
   } else {
+    // Check inputs
     if (text.length == 0) {
       result.value = "不能翻译空句子";
       return;
@@ -87,7 +89,7 @@ const translate = async () => {
   }
 };
 
-(async function () {
+onMounted(async () => {
   const storeSource = store.getLang[0];
   const storeTarget = store.getLang[1];
   if (storeSource != undefined && storeTarget != undefined) {
@@ -107,7 +109,7 @@ const translate = async () => {
         titleMis.value = "(未获取Token)";
       }
     });
-})();
+});
 </script>
 
 <template>

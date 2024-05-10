@@ -113,7 +113,9 @@ type Result = {
         <!--Spam-->
         <el-tab-pane label="祖安特区" name="spam">
           <el-form-item label="使用说明">
-            <span>高强度的版本很容易被夹，建议加上转义</span>
+            <span style="text-align: left">
+              高强度的版本很容易被夹，建议加上转义
+            </span>
           </el-form-item>
           <el-form-item label="选择强度">
             <el-radio-group v-model="query.type">

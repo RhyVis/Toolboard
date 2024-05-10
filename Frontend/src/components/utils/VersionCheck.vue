@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import axios from "axios";
 import moment from "moment";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 import versionJson from "@/../public/version.json";
+
+interface State {
+  type: string;
+  value: string;
+}
 
 const versionState = ref(0);
 
@@ -13,31 +18,31 @@ const versionLocalF = moment(new Date(versionLocal)).format(
 );
 
 const versionRemote = ref(0);
-const versionRemoteF = computed(() => {
+const versionRemoteF = computed<State>(() => {
   switch (versionState.value) {
     case 1:
       return {
         type: "success",
-        text: `${moment(new Date(versionRemote.value)).format(
+        value: `${moment(new Date(versionRemote.value)).format(
           "YYYY/MM/DD (HH:mm:ss)"
         )} 最新版本`,
       };
     case 2:
       return {
         type: "warning",
-        text: `${moment(new Date(versionRemote.value)).format(
+        value: `${moment(new Date(versionRemote.value)).format(
           "YYYY/MM/DD (HH:mm:ss)"
         )} 点击刷新`,
       };
     case -1:
       return {
         type: "danger",
-        text: "版本获取失败",
+        value: "版本获取失败",
       };
     default:
       return {
         type: "info",
-        text: "等待版本获取",
+        value: "等待版本获取",
       };
   }
 });
@@ -48,7 +53,7 @@ const update = () => {
   }
 };
 
-(async () => {
+onMounted(async () => {
   try {
     const versionFetch = (await axios.get("/api/version")).data.compileTime;
     if (versionFetch != "ERROR") {
@@ -66,13 +71,13 @@ const update = () => {
     console.error(e);
     versionState.value = -1;
   }
-})();
+});
 </script>
 
 <template>
   <div @click="update">
     <el-tag style="user-select: none" :type="versionRemoteF.type">
-      {{ versionRemoteF.text }}
+      {{ versionRemoteF.value }}
     </el-tag>
   </div>
 </template>
