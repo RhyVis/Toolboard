@@ -14,6 +14,7 @@ const initAuth = async (_: Record<string, string>) => {
   }
 };
 
+// Encrypt hash first, then give comparasion
 function auth(tokenTest: string) {
   let testHash = crypto.createHash("sha1").update(tokenTest).digest("hex");
   let result = testHash === tokenGlobalHash;
@@ -21,6 +22,7 @@ function auth(tokenTest: string) {
   return result;
 }
 
+// Comparasion only
 function authHash(hashTest: string) {
   let result = hashTest === tokenGlobalHash;
   debug(`Hash challange of ${hashTest} has ${result ? "succeed" : "failed"}`);

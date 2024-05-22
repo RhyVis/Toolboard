@@ -92,6 +92,7 @@ onMounted(() => {
     <!--Result sheet-->
     <div v-if="result.length > 0">
       <el-divider />
+      <!--Card Images-->
       <el-row :gutter="10">
         <el-col :xs="24" :sm="12" :lg="6" v-for="(card, index) in result">
           <TarotMain :key="index" :card="card" :index="index" />

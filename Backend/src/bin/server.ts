@@ -53,29 +53,28 @@ let linkMap: Record<string, string> = {};
     process.exit(1);
   }
 })(resourceMap, linkMap).then(async () => {
-  console.log("");
-  console.log("On auth load:");
+  console.log("\nOn auth load:");
   await initAuth(resourceMap);
-  console.log("");
-  console.log("On tarot load:");
+
+  console.log("\nOn tarot load:");
   await initTarot(resourceMap);
-  console.log("");
-  console.log("On spam load:");
+
+  console.log("\nOn spam load:");
   await initSpam(resourceMap);
-  console.log("");
-  console.log("On majo load:");
+
+  console.log("\nOn majo load:");
   await initMajo(resourceMap);
-  console.log("");
-  console.log("With links listed");
+
+  console.log("\nWith links listed");
   for (let key in linkMap) {
     console.log(`[${key}]: ${linkMap[key]}`);
   }
-  console.log("");
-  console.log("Preload complete");
+
+  console.log("\nPreload complete\n");
   if (process.env.NODE_ENV === "development") {
     const addr = server.address();
     const bind = typeof addr === "string" ? +addr : addr!.port;
-    console.log(`Test on http://localhost:${bind}`);
+    console.log(`Test on http://localhost:${bind}\n`);
   }
 });
 

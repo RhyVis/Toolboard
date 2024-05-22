@@ -22,7 +22,7 @@ const resetButton = () => {
 const fetchResult = async () => {
   const { text } = query;
   if (text.length === 0) {
-    result.value = "🧣🐭入转🈹🏀，啥👃";
+    result.value = "你不输入转什么呢？";
   } else {
     const { dec } = query;
     const type = activeTab.value;
