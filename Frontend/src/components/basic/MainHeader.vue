@@ -5,13 +5,14 @@ import { useAuthStore } from "@/stores/auth";
 const auth = useAuthStore();
 
 const routerToolsNoAuth = [
-  { index: "/tarot", label: "TAROT" },
-  { index: "/codex", label: "CODEX" },
-  { index: "/spam", label: "SPAM" },
-  { index: "/rept", label: "REPEAT" },
+  { index: "/tarot", label: "塔罗" },
+  { index: "/codex", label: "秘典" },
+  { index: "/spam", label: "弹药" },
+  { index: "/revs", label: "翻转" },
+  { index: "/rept", label: "复读" },
 ];
 
-const routerToolsAuth = [{ index: "/trans", label: "TRANSL" }];
+const routerToolsAuth = [{ index: "/trans", label: "翻译" }];
 
 const authSign = ref(false);
 const authPass = () => (authSign.value = !authSign.value);

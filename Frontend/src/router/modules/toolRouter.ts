@@ -20,6 +20,11 @@ const toolRouter = [
     component: () => import("@/views/tools/RepeatView.vue"),
   },
   {
+    path: "/revs",
+    name: "revs",
+    component: () => import("@/views/tools/RevsView.vue"),
+  },
+  {
     path: "/trans",
     name: "trans",
     meta: { requireToken: true },
