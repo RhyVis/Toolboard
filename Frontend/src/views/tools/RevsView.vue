@@ -7,14 +7,35 @@ import { reactive, ref } from "vue";
 
 const query = reactive({
   text: "",
+  mode: "rev",
 });
 const key = ref(0);
 const result = ref("");
 
-const reverse = async () => {
+const modes = [
+  { label: "反转", value: "rev" },
+  { label: "内翻", value: "fold-in" },
+  { label: "外翻", value: "fold-out" },
+];
+
+const action = async () => {
   key.value = new Date().getTime();
   if (query.text.length > 0) {
-    result.value = [...query.text].reverse().join("");
+    const reversed = [...query.text].reverse().join("");
+    switch (query.mode) {
+      case "rev":
+        result.value = reversed;
+        break;
+      case "fold-in":
+        result.value = query.text + reversed;
+        break;
+      case "fold-out":
+        result.value = reversed + query.text;
+        break;
+      default:
+        console.log(`Unexpected mode: ${query.mode}`);
+        break;
+    }
   } else {
     result.value = "你很喜欢这样吗";
   }
@@ -32,8 +53,20 @@ const reverse = async () => {
           required
         />
       </el-form-item>
-      <el-form-item label="倒叙">
-        <el-button @click="reverse">启动</el-button>
+      <el-form-item label="模式">
+        <el-radio-group v-model="query.mode" size="small">
+          <el-radio-button
+            v-for="(mode, index) in modes"
+            :key="index"
+            :label="mode.label"
+            :value="mode.value"
+          />
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="执行">
+        <el-button @click="action">启动</el-button>
+      </el-form-item>
+      <el-form-item label="操作">
         <CopyButton :target="result" :key="key" />
         <ReadButton v-model:target="query.text" />
         <ClearButton v-model:target="query.text" />
