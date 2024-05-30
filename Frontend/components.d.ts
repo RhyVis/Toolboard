@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CardFrame: typeof import('./src/components/frames/CardFrame.vue')['default']
+    ClearButton: typeof import('./src/components/utils/ClearButton.vue')['default']
     CopyButton: typeof import('./src/components/utils/CopyButton.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -33,6 +34,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     MainHeader: typeof import('./src/components/basic/MainHeader.vue')['default']
+    ReadButton: typeof import('./src/components/utils/ReadButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectSimple: typeof import('./src/components/utils/SelectSimple.vue')['default']

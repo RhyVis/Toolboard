@@ -8,6 +8,8 @@ import { useTranslStore } from "@/stores/tools/trans";
 import CardFrame from "@/components/frames/CardFrame.vue";
 import SelectSimple from "@/components/utils/SelectSimple.vue";
 import CopyButton from "@/components/utils/CopyButton.vue";
+import ReadButton from "@/components/utils/ReadButton.vue";
+import ClearButton from "@/components/utils/ClearButton.vue";
 
 const store = useTranslStore();
 
@@ -22,6 +24,7 @@ const query = reactive({
 const auth = useAuthStore();
 
 const titleMis = ref("");
+const key = ref(0);
 const result = ref("");
 
 const options = ref([
@@ -41,6 +44,7 @@ const options = ref([
 
 const translate = async () => {
   const { text, source_lang, target_lang } = query;
+  key.value = new Date().getTime();
   // Cache
   if (
     text === store.text &&
@@ -132,7 +136,9 @@ onMounted(async () => {
       </el-form-item>
       <el-form-item label="翻译">
         <el-button type="primary" @click="translate">Go</el-button>
-        <CopyButton :target="result.split('\n')[0]" />
+        <CopyButton :target="result.split('\n')[0]" :key="key" />
+        <ReadButton v-model:target="query.text" />
+        <ClearButton v-model:target="query.text" />
       </el-form-item>
       <el-form-item label="结果">
         <el-input :value="result" :rows="5" type="textarea" readonly />

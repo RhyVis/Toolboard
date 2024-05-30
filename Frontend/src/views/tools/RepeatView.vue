@@ -3,6 +3,8 @@ import { reactive, ref } from "vue";
 import useClipboard from "vue-clipboard3";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
+import ReadButton from "@/components/utils/ReadButton.vue";
+import ClearButton from "@/components/utils/ClearButton.vue";
 
 const { toClipboard } = useClipboard();
 
@@ -53,7 +55,7 @@ async function copyt() {
 
 function resetButton() {
   copyButton.value = "复制";
-  copyButtonType.value = "info";
+  copyButtonType.value = "";
 }
 </script>
 
@@ -95,10 +97,12 @@ function resetButton() {
             <el-switch v-model="copyMode" />
           </el-form-item>
           <el-form-item label="准备好了">
-            <el-button type="danger" @click="launch">启动！😅</el-button>
+            <el-button type="danger" @click="launch">启动</el-button>
             <el-button :type="copyButtonType" @click="copyt">
               {{ copyButton }}
             </el-button>
+            <ReadButton v-model:target="query.text" />
+            <ClearButton v-model:target="query.text" />
           </el-form-item>
         </el-tab-pane>
       </el-tabs>

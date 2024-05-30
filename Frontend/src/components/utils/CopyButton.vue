@@ -23,7 +23,7 @@ const display = computed<State>(() => {
   switch (state.value) {
     case 0:
       return {
-        type: "primary",
+        type: "",
         value: "复制",
       };
     case 1:

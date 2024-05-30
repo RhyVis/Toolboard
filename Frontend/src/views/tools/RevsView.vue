@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import CardFrame from "@/components/frames/CardFrame.vue";
 import CopyButton from "@/components/utils/CopyButton.vue";
+import ClearButton from "@/components/utils/ClearButton.vue";
+import ReadButton from "@/components/utils/ReadButton.vue";
 import { reactive, ref } from "vue";
 
 const query = reactive({
   text: "",
 });
+const key = ref(0);
 const result = ref("");
 
 const reverse = async () => {
+  key.value = new Date().getTime();
   if (query.text.length > 0) {
     result.value = [...query.text].reverse().join("");
   } else {
@@ -30,7 +34,9 @@ const reverse = async () => {
       </el-form-item>
       <el-form-item label="倒叙">
         <el-button @click="reverse">启动</el-button>
-        <CopyButton :target="result" />
+        <CopyButton :target="result" :key="key" />
+        <ReadButton v-model:target="query.text" />
+        <ClearButton v-model:target="query.text" />
       </el-form-item>
     </el-form>
     <div v-if="result.length > 0">

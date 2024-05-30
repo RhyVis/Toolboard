@@ -4,6 +4,8 @@ import axios from "axios";
 
 import CardFrame from "@/components/frames/CardFrame.vue";
 import CopyButton from "@/components/utils/CopyButton.vue";
+import ReadButton from "@/components/utils/ReadButton.vue";
+import ClearButton from "@/components/utils/ClearButton.vue";
 
 const activeTab = ref("nmsl");
 
@@ -102,8 +104,10 @@ const fetchResult = async () => {
         <span>{{ result }}</span>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="fetchResult">启动！😅</el-button>
+        <el-button type="primary" @click="fetchResult">启动</el-button>
         <CopyButton :target="result" :key="copyButtonKey" />
+        <ReadButton v-model:target="query.text" />
+        <ClearButton v-model:target="query.text" />
       </el-form-item>
     </el-form>
   </CardFrame>
