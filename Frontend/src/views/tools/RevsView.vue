@@ -10,7 +10,7 @@ const result = ref("");
 
 const reverse = async () => {
   if (query.text.length > 0) {
-    result.value = query.text.split("").reverse().join("");
+    result.value = [...query.text].reverse().join("");
   } else {
     result.value = "你很喜欢这样吗";
   }

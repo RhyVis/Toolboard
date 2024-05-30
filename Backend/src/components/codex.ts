@@ -25,7 +25,8 @@ function codexEmoji(text: string, dec: boolean): string {
 
 function codeEmoji(text: string): string {
   let result: string[] = [];
-  for (let char of text) {
+  let textArray = [...text];
+  for (let char of textArray) {
     let alt = dictHanEmoji[char];
     if (alt instanceof Array) {
       // in dict
@@ -45,7 +46,8 @@ function codeEmoji(text: string): string {
 
 function decodeEmoji(text: string): string {
   let result: string[] = [];
-  for (let char of text) {
+  let textArray = [...text];
+  for (let char of textArray) {
     let alt = dictEmojiHan[char];
     if (alt != undefined) {
       // in dict
@@ -62,7 +64,8 @@ function decodeEmoji(text: string): string {
 
 function codexUnidiff(text: string): string {
   let result = "";
-  for (let char of text) {
+  let textArray = [...text];
+  for (let char of textArray) {
     let alt = dictUniDiff[char];
     if (alt) {
       result += alt;
