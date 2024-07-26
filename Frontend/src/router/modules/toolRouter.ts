@@ -30,6 +30,12 @@ const toolRouter = [
     meta: { requireToken: true },
     component: () => import("@/views/tools/TransView.vue"),
   },
+  {
+    path: "/save",
+    name: "save",
+    meta: { requireToken: true },
+    component: () => import("@/views/tools/SaveView.vue"),
+  },
 ];
 
 export default toolRouter;

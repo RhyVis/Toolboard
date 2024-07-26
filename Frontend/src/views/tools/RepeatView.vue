@@ -20,7 +20,7 @@ const result = ref([""]);
 const powCount = ref(false);
 const mergeResult = ref(false);
 const copyMode = ref(false);
-const copyButton = ref("复制？😋");
+const copyButton = ref("复制");
 const copyButtonType = ref("info");
 
 function launch() {

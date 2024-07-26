@@ -12,7 +12,10 @@ const routerToolsNoAuth = [
   { index: "/rept", label: "复读" },
 ];
 
-const routerToolsAuth = [{ index: "/trans", label: "翻译" }];
+const routerToolsAuth = [
+  { index: "/trans", label: "翻译" },
+  { index: "/save", label: "存储" },
+];
 
 const authSign = ref(false);
 const authPass = () => (authSign.value = !authSign.value);

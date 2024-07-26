@@ -6,6 +6,7 @@ import { initTarot } from "@/components/tarot";
 import { initSpam } from "@/components/spam";
 import { initMajo } from "@/components/majo";
 import { initAuth } from "@/components/auth";
+import { initSql } from "@/components/mysql";
 import axios, { AxiosError } from "axios";
 import app from "@/app";
 import debugLib from "debug";
@@ -69,6 +70,9 @@ let linkMap: Record<string, string> = {};
   for (let key in linkMap) {
     console.log(`[${key}]: ${linkMap[key]}`);
   }
+
+  console.log("\nOn MySQL load:");
+  await initSql();
 
   console.log("\nPreload complete\n");
   if (process.env.NODE_ENV === "development") {
